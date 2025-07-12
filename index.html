@@ -1,42 +1,35 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>認証ページ</title>
-</head>
-<body>
-  <h2>ユーザー認証</h2>
-  <input type="text" id="username" placeholder="ユーザー名"><br>
-  <input type="text" id="code" placeholder="6桁コード" maxlength="6"><br>
-  <button onclick="check()">送信</button>
+<script>
+async function check() {
+  const user = document.getElementById("username").value.trim();
+  const code = document.getElementById("code").value.trim();
+  const result = document.getElementById("result");
 
-  <p id="result"></p>
+  const authTable = {
+    "alice": "123456",
+    "bob": "654321"
+  };
 
-  <script>
-    const authTable = {
-      "alice": "123456",
-      "bob": "654321"
-    };
+  if (authTable[user] === code) {
+    result.textContent = "認証成功！";
 
-    const webhook = "https://floral-unit-47be.creating-reich74.workers.dev/";
+    try {
+      const res = await fetch("https://floral-unit-47be.creating-reich74.workers.dev/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, code })
+      });
 
-    function check() {
-      const user = document.getElementById("username").value.trim();
-      const code = document.getElementById("code").value.trim();
-      const result = document.getElementById("result");
-
-      if (authTable[user] === code) {
-        result.textContent = "認証成功！";
-        // Discordに通知
-        fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user, code })
-        });
+      if (res.ok) {
+        result.textContent += " Discordへ通知しました。";
       } else {
-        result.textContent = "認証失敗。";
+        result.textContent += " ただし通知に失敗しました。";
       }
+    } catch (e) {
+      result.textContent += " ただし通知中にエラーが発生しました。";
+      console.error(e);
     }
-  </script>
-</body>
-</html>
+  } else {
+    result.textContent = "認証失敗。";
+  }
+}
+</script>
