@@ -18,42 +18,35 @@
       "bob": "654321"
     };
 
-    const webhook = "https://floral-unit-47be.creating-reich74.workers.dev/"; // ← ここを自分のURLに！
+    async function check() {
+      const user = document.getElementById("username").value.trim();
+      const code = document.getElementById("code").value.trim();
+      const result = document.getElementById("result");
 
-async function check() {
-  const user = document.getElementById("username").value.trim();
-  const code = document.getElementById("code").value.trim();
-  const result = document.getElementById("result");
+      if (authTable[user] === code) {
+        result.textContent = "認証成功！";
 
-  const authTable = {
-    "alice": "123456",
-    "bob": "654321"
-  };
+        try {
+          const res = await fetch("https://floral-unit-47be.creating-reich74.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user, code })
+          });
 
-  if (authTable[user] === code) {
-    result.textContent = "認証成功！";
+          if (res.ok) {
+            result.textContent += " Discordへ通知しました。";
+          } else {
+            result.textContent += " ただし通知に失敗しました。";
+          }
+        } catch (e) {
+          result.textContent += " ただし通知中にエラーが発生しました。";
+          console.error(e);
+        }
 
-    try {
-      const res = await fetch("https://floral-unit-47be.creating-reich74.workers.dev/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user, code })
-      });
-
-      if (res.ok) {
-        result.textContent += " Discordへ通知しました。";
       } else {
-        result.textContent += " ただし通知に失敗しました。";
+        result.textContent = "認証失敗。";
       }
-    } catch (e) {
-      result.textContent += " ただし通知中にエラーが発生しました。";
-      console.error(e);
     }
-  } else {
-    result.textContent = "認証失敗。";
-  }
-}
-
   </script>
- </body>
+</body>
 </html>
