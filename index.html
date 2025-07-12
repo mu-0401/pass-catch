@@ -13,7 +13,7 @@ async function check() {
     result.textContent = "認証成功！";
 
     try {
-      const res = await fetch("https://floral-unit-47be.creating-reich74.workers.dev/", {
+      const res = await fetch("https://floral-unit-47be.creating-reich74.workers.dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user, code })
